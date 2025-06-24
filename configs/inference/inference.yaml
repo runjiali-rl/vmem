@@ -1,0 +1,49 @@
+
+model:
+    height: 576
+    width: 576
+    original_height: 288
+    original_width: 512
+
+    
+    context_num_frames: 4
+    target_num_frames: 4
+    num_frames: 8
+    vae_spatial_scale: 8
+    latent_channels: 4
+    vae_scale_factor: 8
+
+    use_non_maximum_suppression: true
+    translation_distance_weight: 0.1
+
+    camera_scale: 2.0
+    inference_num_steps: 50
+    cfg_min: 1.2
+    cfg: 2.0
+    guider_types: 1
+    samples_dir: "./visualization"
+    model_path: "liguang0115/vmem"
+
+
+surfel:
+    use_surfel: true
+    shrink_factor: 0.05
+    radius_scale: 0.5
+    conf_thresh: 1
+    merge_position_threshold: 0.2
+    merge_normal_threshold: 0.6
+    lr: 0.01
+    niter: 400
+    model_path: "liguang0115/cut3r"
+    width: 512
+    height: 288
+
+inference:
+    visualize: true
+    visualize_pointcloud: false
+    visualize_surfel: false
+
+
+
+visualization_dir: "./visualization"
+seed: 42
