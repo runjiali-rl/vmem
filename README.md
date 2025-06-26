@@ -2,6 +2,9 @@
 <img src="assets/title_logo.png" width="200" alt="VMem Logo"/>
 <h1>VMem: Consistent Interactive Video Scene Generation with Surfel-Indexed View Memory</h1>
 
+<p align="center">ICCV 2025</p>
+
+
 <a href="https://v-mem.github.io/"><img src="https://img.shields.io/badge/%F0%9F%8F%A0%20Project%20Page-gray.svg"></a>
 <a href="http://arxiv.org/abs/2506.18903"><img src="https://img.shields.io/badge/%F0%9F%93%84%20arXiv-2506.18903-B31B1B.svg"></a>
 <a href="https://huggingface.co/liguang0115/vmem"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model_Card-Huggingface-orange"></a>
