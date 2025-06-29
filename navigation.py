@@ -7,7 +7,7 @@ import json
 from typing import List, Optional, Tuple
 import scipy.spatial.transform as spt
 from omegaconf import OmegaConf
-
+import shutil
 
 from modeling.pipeline import VMemPipeline
 from utils import load_img_and_K, transform_img_and_K, get_default_intrinsics
@@ -64,6 +64,11 @@ class Navigator:
             "file_path": f"images/frame_001.png",
             "transform_matrix": initial_pose.tolist() if isinstance(initial_pose, np.ndarray) else initial_pose
         })
+        
+        # clean the visualization folder
+        if os.path.exists("visualization"):
+            shutil.rmtree("visualization")
+        os.makedirs("visualization", exist_ok=True)
         
         return initial_frame
         

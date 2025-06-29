@@ -13,6 +13,7 @@ from diffusers.utils import export_to_video
 from navigation import Navigator
 from utils import tensor_to_pil, get_default_intrinsics, load_img_and_K, transform_img_and_K
 import os
+import shutil
 
 
 CONFIG_PATH = "configs/inference/inference.yaml"
@@ -25,6 +26,21 @@ NAVIGATORS = []
 NAVIGATION_FPS = 13
 WIDTH = 576
 HEIGHT = 576
+
+
+def clear_visualization_directory():
+    """
+    Clear all contents from the visualization directory to prevent users from seeing
+    each other's generated images.
+    """
+    viz_dir = "./visualization"
+    try:
+        if os.path.exists(viz_dir):
+            shutil.rmtree(viz_dir)
+        os.makedirs(viz_dir, exist_ok=True)
+        print(f"Cleared visualization directory: {viz_dir}")
+    except Exception as e:
+        print(f"Warning: Could not clear visualization directory: {e}")
 
 
 IMAGE_PATHS = ['test_samples/oxford.jpg', 
@@ -343,6 +359,9 @@ def render_demonstrate(
                             gr.Warning("Please upload an image first")
                             return "Selection", None, None, None
                         try:
+                            # Clear visualization directory to prevent users from seeing each other's generated images
+                            clear_visualization_directory()
+                            
                             # Load image and prepare for navigation
                             result = load_image_for_navigation(image_path)
                             
@@ -404,6 +423,9 @@ def render_demonstrate(
                 
                 def start_navigation(evt: gr.SelectData):
                     try:
+                        # Clear visualization directory to prevent users from seeing each other's generated images
+                        clear_visualization_directory()
+                        
                         # Get the selected image path
                         selected_path = IMAGE_PATHS[evt.index]
                         
