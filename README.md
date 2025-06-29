@@ -69,13 +69,10 @@ This work is built on top of [CUT3R](https://github.com/CUT3R/CUT3R), [DUSt3R](h
 If you find this repository useful, please consider giving a star :star: and citation.
 
 ```
-@misc{li2025vmemconsistentinteractivevideo,
-  title={VMem: Consistent Interactive Video Scene Generation with Surfel-Indexed View Memory}, 
-  author={Runjia Li and Philip Torr and Andrea Vedaldi and Tomas Jakab},
-  year={2025},
-  eprint={2506.18903},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2506.18903}, 
+@article{li2025vmem,
+  title={VMem: Consistent Interactive Video Scene Generation with Surfel-Indexed View Memory},
+  author={Li, Runjia and Torr, Philip and Vedaldi, Andrea and Jakab, Tomas},
+  journal={arXiv preprint arXiv:2506.18903},
+  year={2025}
 }
 ```
