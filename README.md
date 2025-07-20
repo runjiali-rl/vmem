@@ -1,3 +1,34 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=runjiali-rl&project=vmem&lang=id">Bahasa Indonesia</a>
+      </div>
+    </div>
+  </details>
+</div>
+
 <div align="center">
 <img src="assets/title_logo.png" width="200" alt="VMem Logo"/>
 <h1>VMem: Consistent Interactive Video Scene Generation with Surfel-Indexed View Memory</h1>
