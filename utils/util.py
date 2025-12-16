@@ -370,7 +370,8 @@ def transform_img_and_K(
     if isinstance(size, (tuple, list)):
         # => if size is a tuple or list, we first rescale to fully cover the `size`
         # area and then crop the `size` area from the rescale image
-        W, H = size
+        # W, H = size
+        H, W = size
     else:
         # => if size is int, we rescale the image to fit the shortest side to size
         # => if size is None, no rescaling is applied

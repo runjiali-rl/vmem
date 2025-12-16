@@ -277,8 +277,9 @@ class VMemPipeline:
         # Compute view frustum planes in world space
         # We'll use 6 planes: near, far, left, right, top, bottom
         near_z = 0.1  # Near plane distance
-        far_z = 1000.0  # Far plane distance
-        
+        # far_z = 1000.0  # Far plane distance
+        far_z = 10000.0
+
         # Convert all surfel positions to camera space at once for efficient culling
         positions = np.array([s.position for s in surfels])
         positions_h = np.concatenate([positions, np.ones((len(positions), 1))], axis=1)
@@ -305,10 +306,30 @@ class VMemPipeline:
         margin = 50  # Margin in pixels to account for surfel radius
         in_screen_x = (screen_x >= -margin) & (screen_x < image_width + margin)
         in_screen_y = (screen_y >= -margin) & (screen_y < image_height + margin)
-        
+
         # Combine all culling masks
         visible_mask = in_front & behind_far & in_screen_x & in_screen_y
         visible_indices = np.where(visible_mask)[0]
+
+        # # 添加调试信息
+        # print(f"Total surfels: {len(surfels)}")
+        # print(f"After frustum culling: {len(visible_indices)} surfels")
+        # print(f"in_front: {np.sum(in_front)}")
+        # print(f"behind_far: {np.sum(behind_far)}")
+        # print(f"in_screen_x: {np.sum(in_screen_x)}")
+        # print(f"in_screen_y: {np.sum(in_screen_y)}")
+        # # 检查相机参数
+        # print(f"Camera params - fx: {fx}, fy: {fy}, cx: {cx}, cy: {cy}")
+        # print(f"Image size: {image_width}x{image_height}")
+        # print(f"Pose R shape: {R.shape}, t: {t}")
+        # # 检查surfel位置范围
+        # if len(positions) > 0:
+        #     print(f"Surfel positions range - x: [{np.min(positions[:,0]):.3f}, {np.max(positions[:,0]):.3f}]")
+        #     print(f"Surfel positions range - y: [{np.min(positions[:,1]):.3f}, {np.max(positions[:,1]):.3f}]")
+        #     print(f"Surfel positions range - z: [{np.min(positions[:,2]):.3f}, {np.max(positions[:,2]):.3f}]")
+        # # 检查相机空间坐标
+        # if len(cam_points) > 0:
+        #     print(f"Camera space z range: [{np.min(cam_points[:,2]):.3f}, {np.max(cam_points[:,2]):.3f}]")
 
         def point_in_polygon_2d(px, py, polygon):
             """Fast point-in-polygon test using ray casting"""
@@ -328,8 +349,15 @@ class VMemPipeline:
         cos_angles = np.cos(angles)
         sin_angles = np.sin(angles)
 
+        # 在循环中添加更多调试
+        # processed_count = 0
+        # rendered_count = 0
+
         # Process only visible surfels
         for idx in visible_indices:
+
+            # processed_count += 1
+
             surfel = surfels[idx]
             px, py, pz = surfel.position
             nx, ny, nz = surfel.normal
@@ -393,10 +421,14 @@ class VMemPipeline:
             for py_ in range(min_y, max_y + 1):
                 for px_ in range(min_x, max_x + 1):
                     if point_in_polygon_2d(px_, py_, valid_points):
+                        # rendered_count += 1
                         if avg_depth < z_buffer[py_, px_]:
                             z_buffer[py_, px_] = avg_depth
                             surfel_index_map[py_, px_] = idx
                             cos_buffer[py_, px_] = cos_value
+
+        # print(f"Processed {processed_count} visible surfels")
+        # print(f"Rendered {rendered_count} pixels")
 
         # Clean up depth buffer
         depth = z_buffer
@@ -460,7 +492,6 @@ class VMemPipeline:
         return result
     
     def process_retrieved_spatial_information(self, retrieved_spatial_information):
-        
         timestep_count = {} 
   
         surfel_index_map = retrieved_spatial_information["surfel_index_map"]
@@ -477,14 +508,12 @@ class VMemPipeline:
                 continue
             surfel_index = filtered_surfel_index[j]
             timesteps = self.surfel_to_timestep[surfel_index]
-   
+
             for timestep in timesteps:
                 
                 if timestep not in timestep_count:
                     timestep_count[timestep] = cos_value/(1+depth_value)
                 timestep_count[timestep] += cos_value/(1+depth_value)
-            
-
 
         timestep_count_values = np.array(list(timestep_count.values()))
         timestep_count_ratios = timestep_count_values / np.sum(timestep_count_values)
@@ -665,7 +694,8 @@ class VMemPipeline:
                                                 torch.from_numpy(self.c2ws[frame]).to(self.device, self.dtype), 
                                                 weight_translation=self.config.model.translation_distance_weight).item() 
                         for frame in candidates]
-            
+
+
             sorted_indices = torch.argsort(torch.tensor(distances))
             sorted_frames = [indices_to_frame[int(i.item())] for i in sorted_indices]
             max_frames = min(self.config.model.context_num_frames, len(candidates), len(self.latents))
@@ -974,7 +1004,10 @@ class VMemPipeline:
         """
         # Flip Y and Z components of camera poses to match dataset convention
         c2ws_transformed = self.get_transformed_c2ws()
-        
+        # for i in range(len(input_images)):
+        #     print(f'test {i} \n')
+        #     print(input_images[i].size)
+        # input()
 
         scene = run_inference_from_pil(
             input_images,
@@ -1267,21 +1300,39 @@ class VMemPipeline:
             cond = self.get_cond(context_latents, all_c2ws, all_Ks, translation_scaling_factor, context_encoder_embeddings, input_masks)
 
             # Generate samples
-            samples, samples_z = do_sample(self.model_wrapper, 
-                                         self.vae, 
-                                         self.denoiser, 
-                                         self.sampler[0],
-                                         cond["c"],
-                                         cond["uc"],
-                                         cond["all_c2ws"],
-                                         cond["all_Ks"],
-                                         input_masks,
-                                         H=576, W=576, C=4, F=8, T=8, 
-                                         cfg=self.config.model.cfg,  
-                                         verbose=True, 
-                                         global_pbar=None, 
-                                         return_latents=True,
-                                         device=self.device)
+            # samples, samples_z = do_sample(self.model_wrapper,
+            #                              self.vae,
+            #                              self.denoiser,
+            #                              self.sampler[0],
+            #                              cond["c"],
+            #                              cond["uc"],
+            #                              cond["all_c2ws"],
+            #                              cond["all_Ks"],
+            #                              input_masks,
+            #                              H=576, W=576, C=4, F=8, T=8,
+            #                              cfg=self.config.model.cfg,
+            #                              verbose=True,
+            #                              global_pbar=None,
+            #                              return_latents=True,
+            #                              device=self.device)
+
+            samples, samples_z = do_sample(self.model_wrapper,
+                                           self.vae,
+                                           self.denoiser,
+                                           self.sampler[0],
+                                           cond["c"],
+                                           cond["uc"],
+                                           cond["all_c2ws"],
+                                           cond["all_Ks"],
+                                           input_masks,
+                                           H=self.config.model.height,
+                                           W=self.config.model.width,
+                                           C=4, F=8, T=8,
+                                           cfg=self.config.model.cfg,
+                                           verbose=True,
+                                           global_pbar=None,
+                                           return_latents=True,
+                                           device=self.device)
 
             # Process and store generated frames
             target_num = torch.sum(~input_masks)

@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 # from seva.geometry import get_camera_dist
 from typing import Union
+from torch.nn import functional as F
 
 
 def get_camera_dist(
@@ -55,6 +56,12 @@ def append_zero(x: torch.Tensor) -> torch.Tensor:
 
 
 def to_d(x: torch.Tensor, sigma: torch.Tensor, denoised: torch.Tensor) -> torch.Tensor:
+    # print(f"x shape: {x.shape}")
+    # print(f"sigma shape: {sigma.shape}")
+    # print(f"denoised shape: {denoised.shape}")
+    if x.shape != denoised.shape:
+        # print(f"调整 denoised 从 {denoised.shape} 到 {x.shape}")
+        denoised = F.interpolate(denoised, size=x.shape[2:], mode='bilinear', align_corners=False)
     return (x - denoised) / append_dims(sigma, x.ndim)
 
 
@@ -178,7 +185,13 @@ class DiscreteDenoiser(object):
         c_noise = self.sigma_to_idx(c_noise.reshape(sigma_shape))
         if "replace" in cond:
             x, mask = cond.get("replace").split((input.shape[1], 1), dim=1)
-        
+
+            if input.shape[2:] != mask.shape[2:]:  # 检查空间维度是否匹配
+                input = F.interpolate(input, size=mask.shape[2:], mode='bilinear', align_corners=False)
+            # print(f"input shape: {input.shape}")
+            # print(f"mask shape: {mask.shape}")
+            # print(f"x shape: {x.shape}")
+
             input = input * (1 - mask) + x * mask
         return (
             network(input * c_in, c_noise, cond, **additional_model_inputs) * c_out
